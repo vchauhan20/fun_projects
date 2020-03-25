@@ -1,0 +1,33 @@
+import cv2 as cv
+import numpy as np
+cap=cv.VideoCapture(0)
+cv.namedWindow('frame',cv.WINDOW_NORMAL)
+cv.resizeWindow('frame',500,500)
+cv.namedWindow('difference',cv.WINDOW_NORMAL)
+cv.resizeWindow('difference',500,500)
+cv.namedWindow('returned',cv.WINDOW_NORMAL)
+cv.resizeWindow('returned',500,500)
+while(cap.isOpened()):
+    
+    ret,img=cap.read()
+    ret,img1=cap.read()
+    diff=cv.absdiff(img,img1)
+    binary=cv.cvtColor(diff,cv.COLOR_BGR2GRAY)
+    binary=cv.GaussianBlur(binary,(5,5),0)
+    re,thresh=cv.threshold(binary,20,255,cv.THRESH_BINARY)
+    image,contours,hierar=cv.findContours(thresh,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+    
+    cv.drawContours(img1,contours,-1,(0,0,255),2)
+    for contour in contours:
+        if cv.contourArea(contour)>1500:
+            x,y,w,h=cv.boundingRect(contour)
+            cv.rectangle(img1,(x,y),(x+w,y+h),(0,255,0))
+    cv.imshow('frame',img1)
+    cv.imshow('difference',thresh)
+    cv.imshow('returned',image)
+    
+    k=cv.waitKey(10)
+    if(k==27):
+        break
+cap.release()
+cv.destroyAllWindows()
