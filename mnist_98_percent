@@ -1,0 +1,23 @@
+import tensorflow as tf
+
+import numpy
+import matplotlib.pyplot as plt
+(x_train,y_train),(x_test,y_test)=tf.keras.datasets.mnist.load_data()
+
+x_train,y_train=x_train/255,y_train/255
+
+model=tf.keras.models.Sequential([tf.keras.layers.Flatten(input_shape=(28,28))
+                                  ,tf.keras.layers.Dense(128,activation='relu'),
+                                  tf.keras.layers.Dropout(.2),
+                                  tf.keras.layers.Dense(10,activation='softmax')])
+
+loss_fuc=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+
+model.compile(optimizer='Adam',loss=loss_fuc,metrics=['accuracy'])
+
+model.fit(x_train,y_train,epochs=5)
+model.evaluate(x_test,y_test,verbose=2)
+
+plt.imshow(x_test[0])
+
+tf.nn.softmax(model(x_test[:1]).numpy())
