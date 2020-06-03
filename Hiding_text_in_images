@@ -1,0 +1,15 @@
+# store the .png file in the same folder as the python code file
+
+from stegano import lsb # least significant bit
+import skimage.io as sk
+
+img=sk.imread('forest.png')
+encrypted_text_image=lsb.hide('forest.png','It's awesome to hide text in images')  # we have secretly implanted the text in the lsb of the image
+
+# saving the file , so that it can be sent to someone
+encrypted_text_image.save('secret.png')
+
+
+# at the receiver end the person can simply decode the message by doing 
+
+lsb.reveal('secret.png')
